@@ -108,8 +108,9 @@ Note:\tThe default [dir] is $trash
 
 		'send')
 			file=$(basename $2)
+			date=$(date -d "+$MAXTIME days" +%s)
 			mv $2 $trash
-			printf "$file: $(date -d 'now' +%s): $(readlink --canonicalize $2)\n" >> $trash/CLEANME
+			printf "$file: $date: $(readlink --canonicalize $2)\n" >> $trash/CLEANME
 			printf "[ OK ] \033[32mOK\033[0m: done\n"
 			;;
 
