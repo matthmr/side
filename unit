@@ -1,0 +1,31 @@
+#!/usr/bin/sh
+# Made by mH (https://www.github.com/matthmr)
+
+# Simple unit test using a shell
+# unit [script]
+
+here=${BASH_SOURCE[0]}
+here=$(dirname $here)
+here=$(readlink -f $here)
+PATH="$PATH:$here"
+
+RUN='$1'
+
+TESTS="" # add your tests here
+
+EXPECTED="" # add your expectations here
+
+TOTAL=`echo $TESTS|awk '{print NF}'`
+curr_test=1
+
+echo \[ .. \] Starting unit test for $1
+
+for flag in $TESTS; do
+	echo '------------------------------------------------'
+	flag=$(echo $flag|sed 's/%/ /g')
+	echo \[ .. \] Test [ $curr_test / $TOTAL ]: $RUN $flag
+	$RUN $flag
+	echo \[ \*\* \] Expected: $(echo $EXPECTED|awk "{print \$""$curr_test}")
+	curr_test=$(($curr_test + 1))
+	echo '------------------------------------------------'
+done
