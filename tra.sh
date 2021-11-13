@@ -96,7 +96,7 @@ Note:\tThe default [dir] is $trash
 				LINE=$(($LINE + 1))
 				file=$(echo $line | cut -d ':' -f 1)
 				[[ "$file" = $2 ]] && {
-					[ -f $trash/$file ] && rm -r $trash/$file
+					rm -r $trash/$file
 					sed -i "$LINE"d  $trash/CLEANME
 					break
 				}
