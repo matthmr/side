@@ -9,23 +9,21 @@ here=$(dirname $here)
 here=$(readlink -f $here)
 PATH="$PATH:$here"
 
-RUN='$1'
+RUN='/home/mh/scripts/scripts.d/lib/sdread'
 
-TESTS="" # add your tests here
+TESTS=()
+TOTAL=${#TESTS[@]}
 
-EXPECTED="" # add your expectations here
-
-TOTAL=`echo $TESTS|awk '{print NF}'`
 curr_test=1
 
 echo \[ .. \] Starting unit test for $1
 
-for flag in $TESTS; do
+for flag in $(seq 0 $(($TOTAL-1))); do
 	echo '------------------------------------------------'
-	flag=$(echo $flag|sed 's/%/ /g')
+	flag=${TESTS[$flag]}
 	echo \[ .. \] Test [ $curr_test / $TOTAL ]: $RUN $flag
 	$RUN $flag
-	echo \[ \*\* \] Expected: $(echo $EXPECTED|awk "{print \$""$curr_test}")
+	# echo \[ \*\* \] Expected: $(echo $EXPECTED)
 	curr_test=$(($curr_test + 1))
 	echo '------------------------------------------------'
 done
