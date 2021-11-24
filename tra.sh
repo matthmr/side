@@ -3,7 +3,7 @@
 
 # Fallbacks
 MAXTIME=30 # in days; change this to the amount you want
-trash=$HOME/.trash # standard trash; i'm not gonna be bothered to make this dynamic
+trash=/home/mh/.trash # standard trash; i'm not gonna be bothered to make this dynamic
 
 function datediff {
 	local date=$(( ($1 - $2) / 86400 )) # in days
@@ -61,7 +61,7 @@ function datediff {
 			exit 0;;
 
 		'--help'|'-h')
-			printf "Made by mH (https://github.com/matthmr)
+			printf "\nMade by mH (https://github.com/matthmr)
 	tra.sh\t\t\t => Recycle bin for linux\n
 Usage:\ttra.sh del        [file] => (Permanently) deletes a file
 	tra.sh send       [file] => Sends a file to trash

@@ -6,4 +6,7 @@ For you Windows®©™ peeps who miss the recycle bin from that ***GOD-FORBIDDEN
 Also for this to be functional you need to write `tra.sh update` in some file that is read every time the system boots up like `.xinitrc`, `.bashrc`, `/etc/profile`, etc. Else you can manually update it with `tra.sh update`.
 
 ## unit
-"Unit test" with a shell script. Change `TESTS` and `EXPECTED` to get proper testing
+"Unit test" with a shell script. Change `TESTS` to get proper testing.
+
+## ffl
+[unit](#unit) integration with [fzf](https://github.com/junegunn/fzf).

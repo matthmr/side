@@ -1,6 +1,10 @@
 #!/usr/bin/sh
 # Made by mH (https://www.github.com/matthmr)
 
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
 # Simple unit test using a shell
 # unit [script]
 
@@ -9,21 +13,34 @@ here=$(dirname $here)
 here=$(readlink -f $here)
 PATH="$PATH:$here"
 
-RUN='/home/mh/scripts/scripts.d/lib/sdread'
+RUN='' # change this
+goto='' # change this
+TESTS=() # change this
 
-TESTS=()
 TOTAL=${#TESTS[@]}
 
 curr_test=1
 
 echo \[ .. \] Starting unit test for $1
 
-for flag in $(seq 0 $(($TOTAL-1))); do
-	echo '------------------------------------------------'
-	flag=${TESTS[$flag]}
-	echo \[ .. \] Test [ $curr_test / $TOTAL ]: $RUN $flag
-	$RUN $flag
-	# echo \[ \*\* \] Expected: $(echo $EXPECTED)
-	curr_test=$(($curr_test + 1))
-	echo '------------------------------------------------'
-done
+function main() {
+	for flag in $(seq 0 $(($TOTAL-1))); do
+		echo '------------------------------------------------'
+		flag=${TESTS[$flag]}
+		echo \[ .. \] Test [ $curr_test / $TOTAL ]: $_RUN $flag
+		$RUN $flag 2>&1
+		# echo \[ \*\* \] Expected: $(echo $EXPECTED)
+		curr_test=$(($curr_test + 1))
+		echo '------------------------------------------------'
+	done
+}
+
+filename=$(basename $0)-$(date +%Y-%m-%d.%H-%M-%S).log # change this
+
+RESULTS=$(main)
+
+echo -e "$RESULTS"
+
+echo -e "$RESULTS" > $goto/$filename
+
+echo \[ .. \] Logged to $goto/$filename
