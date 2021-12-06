@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
+# orx: override X:
+#      xbindkeys command to be used with clipmenu and rofi
+#      it has a orx.xbindkeysrc counterpart which is supposed
+#      to be dumped into your .xbindkeys. Default key binding
+#      is CONTROL+ALT+v
+
+cache='' # change this
+
+clips=$(ls $cache -1tQ)
+
+while read clip; do
+	if [[ $(echo ${clip:1:1} | grep '[0-9]') ]]; then
+		cat "$cache/${clip//\"/}" > /tmp/file
+		exit
+	else
+		continue
+	fi
+done <<< $(printf "$clips")

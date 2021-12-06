@@ -10,3 +10,6 @@ Also for this to be functional you need to write `tra.sh update` in some file th
 
 ## ffl
 [unit](#unit) integration with [fzf](https://github.com/junegunn/fzf).
+
+## orx
+[clipmenu](https://github.com/cdown/clipmenu) integration with [xbindkeys](git://git.savannah.nongnu.org/xbindkeys.git/).
