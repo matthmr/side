@@ -10,15 +10,16 @@
 #      to be dumped into your .xbindkeys. Default key binding
 #      is CONTROL+ALT+v
 
-cache='' # change this
+dir=${XDG_RUNTIME_DIR-"${TMPDIR-/tmp}"}/clipmenu.6.$USER # change this
+#                                    ... but only if I've lagged behind the latest version of clipmenu
 
-clips=$(ls $cache -1tQ)
+cache="$dir/line_cache"
 
-while read clip; do
-	if [[ $(echo ${clip:1:1} | grep '[0-9]') ]]; then
-		cat "$cache/${clip//\"/}" > /tmp/file
-		exit
-	else
-		continue
-	fi
-done <<< $(printf "$clips")
+manifest() {
+    LC_ALL=C sort -rnk 1 < "$cache" | cut -d' ' -f2- | awk '!seen[$0]++'
+}
+
+HEADER=$(manifest | head -1)
+clipboard=$dir/$(cksum <<< "$HEADER")
+
+xsel --logfile /dev/null -i clipboard < "$clipboard"

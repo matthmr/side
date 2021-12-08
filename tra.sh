@@ -1,9 +1,19 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 # Made by mH (https://github.com/matthmr)
 
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
+# tra.sh: recycle bin for linux
+
 # Fallbacks
-MAXTIME=30 # in days; change this to the amount you want
-trash=/home/mh/.trash # standard trash; i'm not gonna be bothered to make this dynamic
+MAXTIME=30 # change this
+trash=/home/$USER/.trash # change this
+#                   ... unless I've made this scriptsd compliant
+#                   ... in which case download that instead
+
+VERSION="v0.1.0"
 
 function datediff {
 	local date=$(( ($1 - $2) / 86400 )) # in days
@@ -76,7 +86,7 @@ Note:\tThe default [dir] is $trash
 			exit 0;;
 
 		'--version'|'-v')
-			printf "tra.sh v0.1.0\n"
+			printf "tra.sh $VERSION\n"
 			exit 0;;
 
 		*)
