@@ -3,7 +3,22 @@ Just lil' pointless things, mostly scripts that are too useless to be on [script
 
 ## tra.sh
 For you Windows®©™ peeps who miss the recycle bin from that ***GOD-FORBIDDEN*** operating system.
-Also for this to be functional you need to write `tra.sh update` in some file that is read every time the system boots up like `.xinitrc`, `.bashrc`, `/etc/profile`, etc. Else you can manually update it with `tra.sh update`.
+### Installation and usage:
+- put `tra.sh` into a `$PATH` directory (/usr/local/bin, for example).
+- run `tra.sh init` or `tra.sh init [dir]` to instanciate a `tra.sh` directory.
+- `tra.sh send [file]` or `tra.sh s [file]` to send, add the `-a` flag to pass an alias, as in:
+```sh
+tra.sh send file -a trash
+# so that you can do
+tra.sh rm \; -a trash
+# and not have to remeber the full name of the file
+```
+- `tra.sh remove [file]` or `trash rm [file]` to remove.
+- `tra.sh list` or `tra.sh ls` to list.
+- `tra.sh restore [file]` ot `tra.sh rs [file]` to restore; also supports the `-a` flag.
+- `tra.sh update` or `tra.sh up` to delete files **older** than a month (that can be changed by changing the `MAXTIME_DAYS` variable. This script is **NOT** scriptsd compliant (yet)).
+- `tra.sh clean` or `tra.sh c` to clean **all** files.
+
 
 ## unit
 "Unit test" with a shell script. Change `TESTS` to get proper testing.
