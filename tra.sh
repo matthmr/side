@@ -132,14 +132,14 @@ function remove {
 
 		if [[ $has_alias = false ]]; then
 			if [[ $__file == $file ]]; then
-				rm $trash/$__file 2>/dev/null && {
+				rm -r $trash/$__file 2>/dev/null && {
 					sed -in "$lineno"d $trashfile
 					printf "[ OK ] removed $__file from $trash\n"
 					exit 0
 				} || die
 			fi
 		elif [[ $__alias == $_alias ]]; then
-			rm $trash/$__file 2>/dev/null && {
+			rm -r $trash/$__file 2>/dev/null && {
 				sed -in "$lineno"d $trashfile
 				printf "[ OK ] removed $__file from $trash\n"
 				exit 0
