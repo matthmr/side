@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+logdir="/home/mh/Log"
+units=$(ls -1 $logdir | grep "$1\-[0-9]")
+
+for unit in $units; do
+	UNITS="$UNITS $logdir/$unit"
+done
+
+[ ! "$UNITS" ] && {
+	echo \[ !! \] No $1 unit
+	exit 1
+}
+
+rm $UNITS &&
+	echo \[ .. \] Removed $1 unit from $logdir ||
+	echo \[ !! \] No $1 unit

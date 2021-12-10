@@ -1,46 +1,51 @@
-#!/usr/bin/sh
-# Made by mH (https://www.github.com/matthmr)
+#!/usr/bin/env bash
+# Made by mH (https://github.com/matthmr)
 
 #*****************************************************
 # change anything that is followed by "#change this" #
 #*****************************************************
 
-# Simple unit test using a shell
-# unit [script]
+# unit: unit testing with a shell script
+#       use the file at /unit as a template
 
-here=${BASH_SOURCE[0]}
-here=$(dirname $here)
-here=$(readlink -f $here)
-PATH="$PATH:$here"
+# unit [-o] unit ...
 
-RUN='' # change this
-goto='' # change this
-TESTS=() # change this
+if [[ $# == 0 ]]; then
+	echo Usage: unit \[-o\] unit \.\.\. See unit --help && exit 1;
+fi
 
-TOTAL=${#TESTS[@]}
+case $1 in
+	'--help'|'-h')
+		printf "\nMade by mH (https://github.com/matthmr)
+	unit\t\t\t => Unit testing with a shell script \n
+Usage:\tunit [unit...]\t\t => Runs a unit
+	unit -o [unit...]\t => Runs a unit and log their result (STDOUT and STDERR) to a directory\n
+Info:\tunit [--help/-h]\t => Displays this message and exit
+	unit [--version/-v]\t => Displays version and exits\n
+Note:\tThis is NOT scriptsd compliant
+\n"
+	exit;;
+'--version'|'v') printf "v0.2.1\n"
+	exit;;
+esac
 
-curr_test=1
+unit=$1
+flag=false
+log_dir="/home/mh/Log" # change this
 
-echo \[ .. \] Starting unit test for $1
+[ $1 = '-o' ] && unit=$2 && flag=true
 
-function main() {
-	for flag in $(seq 0 $(($TOTAL-1))); do
-		echo '------------------------------------------------'
-		flag=${TESTS[$flag]}
-		echo \[ .. \] Test [ $curr_test / $TOTAL ]: $_RUN $flag
-		$RUN $flag 2>&1
-		# echo \[ \*\* \] Expected: $(echo $EXPECTED)
-		curr_test=$(($curr_test + 1))
-		echo '------------------------------------------------'
-	done
+_test="/home/mh/scripts.d/unit/unit-$unit" # change this
+
+$flag && {
+	file=$(basename $unit)-$(date +%Y-%m-%d.%H-%M-%S).log
+	RESULTS=$($_test ${@:2})
+	[ ! "$RESULTS" ] && echo ERR\: No unit $unit || {
+	echo -e "$RESULTS" 2>&1
+	echo -e "$RESULTS" 2>&1 > $log_dir/$file
+	echo \[ \.\. \] Logged to $log_dir/$file
+	}
+} || {
+	$_test ${@:2}
 }
 
-filename=$(basename $0)-$(date +%Y-%m-%d.%H-%M-%S).log # change this
-
-RESULTS=$(main)
-
-echo -e "$RESULTS"
-
-echo -e "$RESULTS" > $goto/$filename
-
-echo \[ .. \] Logged to $goto/$filename
