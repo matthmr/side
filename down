@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
 # Made by mH (https://github.com/matthmr)
 
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
 # down - DON'T FORGET TO UPDATE YOUR SYSTEM!!
 
 # usage: down [up/down/status/sys/help]
 # note:  compatible only with systemd-compliant systems or with systems that have `shutdown`
 #        linked to their respective init systems' way of shutting down.
 
-term=kitty
-update='pacman -Su'
-shell=bash
-shutdown=shutdown
-cancel='shutdown -c'
+term= # change this
+update= # change this
+shell= # change this
+shutdown= # chane this
 
 usage() {
-	echo 'Usage: down [up/down, sys/back status,help]'
+	echo 'Usage: down [up/down, sys, status/help]'
 }
 
 [[ $1 = '-T' ]] && {
@@ -49,7 +52,9 @@ usage() {
 	exit
 } ||
 
-[[ $1 = 'help' ]] && usage && exit 0
+[[ $1 = 'help' ]] && {
+	usage && exit 0
+} ||
 
 [[ $1 = 'sys' ]] && {
 
@@ -68,6 +73,4 @@ usage() {
 	else
 		$shutdown
 	fi
-} ||
-
-[[ $1 = 'back' ]] && $cancel || usage && exit 1
+}  || usage && exit 1
