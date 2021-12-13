@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Made by mH (https://github.com/matthmr)
+
+# down - DON'T FORGET TO UPDATE YOUR SYSTEM!!
+
+# usage: down [up/down/status/sys/help]
+# note:  compatible only with systemd-compliant systems or with systems that have `shutdown`
+#        linked to their respective init systems' way of shutting down.
+
+term=kitty
+update='pacman -Su'
+shell=bash
+shutdown=shutdown
+cancel='shutdown -c'
+
+usage() {
+	echo 'Usage: down [up/down, sys/back status,help]'
+}
+
+[[ $1 = '-T' ]] && {
+	printf '[!!] There updates available. Shut down either way? [y/N] '
+	read ans
+	if [[ $ans == [Yy] || $ans == [Yy][Ee][Ss] ]]; then
+		$shutdown
+	elif [[ $ans == [Nn] || $ans == [Nn][Oo] || $ans == '' ]]; then
+		$update
+	fi
+}
+
+[[ $1 = 'status' ]] && {
+	[ -f /tmp/up ] && echo [!!] Update available ||
+	echo [..] No update mark set yet
+
+	exit
+} ||
+
+[[ $1 = 'up' ]] && {
+	[ ! -f /tmp/up ] && {
+		touch /tmp/up && echo '[OK] Set update'
+	} || echo [!!] Already set an update mark
+	exit
+} ||
+
+[[ $1 = 'down' ]] && {
+	[ -f /tmp/up ] && {
+		rm /tmp/up && echo '[OK] Mark update as done'
+		
+	} || echo [!!] No update mark set yet
+	exit
+} ||
+
+[[ $1 = 'help' ]] && usage && exit 0
+
+[[ $1 = 'sys' ]] && {
+
+	if [ -f /tmp/up ]; then
+		if [[ $(pidof $term) != '' ]]; then
+			printf '[!!] There updates available. Shut down either way? [y/N] '
+			read ans
+			if [[ $ans == [Yy] || $ans == [Yy][Ee][Ss] ]]; then
+				$shutdown
+			elif [[ $ans == [Nn] || $ans == [Nn][Oo] || $ans == '' ]]; then
+				$update
+			fi
+		else
+			$term $(which down) -T &
+		fi
+	else
+		$shutdown
+	fi
+} ||
+
+[[ $1 = 'back' ]] && $cancel || usage && exit 1
