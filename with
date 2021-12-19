@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Made by mH (https://github.com/matthmr)
+
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
+# with: diff files in memory
+
+# Fallbacks
+TMP=/tmp # change this
+
+VERSION="v0.1.0"
+
+### BEGIN ABOUT ###
+function about {
+		printf "\nMade by mH (https://github.com/matthmr)
+	tra.sh\t\t\t\t => Recycle bin for linux\n
+Usage:\ttra.sh remove  [file] [-a alias] [-t trash]
+	\t\t\t\t \`- (Permanently) deletes a file
+	tra.sh send    [file] [-a alias] [-t trash]
+	\t\t\t\t \`- Sends a file to trash, with an alias if passed through
+	tra.sh restore [file] [-a alias] [-t trash]
+	\t\t\t\t \`- Restores a file
+
+	tra.sh init    [dir]  \t\t => Instanciates a recycle bin
+	tra.sh list    [dir]  \t\t => Lists files in trash with their aliases
+	tra.sh update  [dir]  \t\t => Updates bin. Files over $MAXTIME_DAYS days are deleted
+	tra.sh clean   [dir]  \t\t => Cleans bin\n
+Info:\ttra.sh [--help/-h]\t\t => Displays this message and exit
+	tra.sh [--version/-v]\t\t => Displays version and exits\n
+Note:\tThe default [trash] is $trash
+     \tAll commands have shortcuts. See tra.sh short
+\n"
+}

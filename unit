@@ -8,34 +8,47 @@
 # unit: unit testing with a shell script
 #       use the file at /unit as a template
 
-# unit [-o] unit ...
+# unit [-o/-l] [unit ...]
+
+usage() {
+	printf "\nMade by mH (https://github.com/matthmr)
+	unit\t\t\t => Unit testing with a shell script \n
+Usage:\tunit [unit...]\t\t => Runs a unit
+	unit -o [unit...]\t => Runs a unit and log their result (STDOUT and STDERR) to a directory
+	unit [--list/-l]     \t => Lists available units\n
+Info:\tunit [--help/-h]\t => Displays this message and exit
+	unit [--version/-v]\t => Displays version and exits\n
+Note:\tThis is NOT scriptsd compliant
+\n"
+
+}
 
 if [[ $# == 0 ]]; then
 	echo Usage: unit \[-o\] unit \.\.\. See unit --help && exit 1;
 fi
 
-case $1 in
-	'--help'|'-h')
-		printf "\nMade by mH (https://github.com/matthmr)
-	unit\t\t\t => Unit testing with a shell script \n
-Usage:\tunit [unit...]\t\t => Runs a unit
-	unit -o [unit...]\t => Runs a unit and log their result (STDOUT and STDERR) to a directory\n
-Info:\tunit [--help/-h]\t => Displays this message and exit
-	unit [--version/-v]\t => Displays version and exits\n
-Note:\tThis is NOT scriptsd compliant
-\n"
-	exit;;
-'--version'|'v') printf "v0.2.1\n"
-	exit;;
-esac
 
-unit=$1
 flag=false
-log_dir="/home/mh/Log" # change this
-
+unit=$1
 [ $1 = '-o' ] && unit=$2 && flag=true
 
-_test="/home/mh/scripts.d/unit/unit-$unit" # change this
+log_dir="" # change this
+unit_dir="" # change this
+_test="" # change this
+list='' # change this
+VERSION='v0.2.2'
+
+case $1 in
+'--help'|'-h')
+	usage
+	exit;;
+'--version'|'v')
+	printf "unit $VERSION\n"
+	exit;;
+'--list'|'-l')
+	$list $unit_dir
+	exit;;
+esac
 
 $flag && {
 	file=$(basename $unit)-$(date +%Y-%m-%d.%H-%M-%S).log
@@ -46,6 +59,9 @@ $flag && {
 	echo \[ \.\. \] Logged to $log_dir/$file
 	}
 } || {
-	$_test ${@:2}
+	$_test ${@:2} || {
+		echo [ !! ] No unit $unit to run.
+		exit 1
+	}
 }
 
