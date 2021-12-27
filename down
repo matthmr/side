@@ -21,7 +21,7 @@ usage() {
 }
 
 [[ $1 = '-T' ]] && {
-	printf '[!!] There updates available. Shut down either way? [y/N] '
+	printf '[ !! ] There updates available. Shut down either way? [y/N] '
 	read ans
 	if [[ $ans == [Yy] || $ans == [Yy][Ee][Ss] ]]; then
 		$shutdown
@@ -32,23 +32,23 @@ usage() {
 
 [[ $1 = 'status' ]] && {
 	[ -f /tmp/up ] && echo [!!] Update available ||
-	echo [..] No update mark set yet
+	echo [ .. ] No update mark set yet
 
 	exit
 } ||
 
 [[ $1 = 'up' ]] && {
 	[ ! -f /tmp/up ] && {
-		touch /tmp/up && echo '[OK] Set update'
-	} || echo [!!] Already set an update mark
+		touch /tmp/up && echo '[ OK ] Set update'
+	} || echo [ !! ] Already set an update mark
 	exit
 } ||
 
 [[ $1 = 'down' ]] && {
 	[ -f /tmp/up ] && {
-		rm /tmp/up && echo '[OK] Mark update as done'
+		rm /tmp/up && echo '[ OK ] Mark update as done'
 		
-	} || echo [!!] No update mark set yet
+	} || echo [ !! ] No update mark set yet
 	exit
 } ||
 
@@ -60,7 +60,7 @@ usage() {
 
 	if [ -f /tmp/up ]; then
 		if [[ $(pidof $term) != '' ]]; then
-			printf '[!!] There updates available. Shut down either way? [y/N] '
+			printf '[ !! ] There updates available. Shut down either way? [y/N] '
 			read ans
 			if [[ $ans == [Yy] || $ans == [Yy][Ee][Ss] ]]; then
 				$shutdown

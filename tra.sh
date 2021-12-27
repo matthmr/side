@@ -48,7 +48,6 @@ function shortcut {
 	clean   => c
 	short   => smol\n
 "
-
 }
 ### END ABOUT ###
 
