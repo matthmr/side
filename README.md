@@ -60,3 +60,7 @@ This script is **not** scripts.d compliant. Default tmpfs is `/tmp`
 
 ## clock
 A dwm shell script for a cool® status bar.
+It should look like this:
+![Status Bar](assets/status-bar.png)
+(minus the black box in the middle)
+If it doesn't, install a [nerd font](https://github.com/ryanoasis/nerd-fonts) or patch dwm to render UTF-8.

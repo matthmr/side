@@ -9,6 +9,7 @@
 
 TMP=/tmp # change this
 LOCKFILE=$TMP/td.lock # change this
+DIFF=/bin/diff # change this
 
 VERSION="v0.2.2"
 
@@ -81,20 +82,24 @@ function resolute {
 	ENTRY=$1
 	ENTRYBASE=$(echo $ENTRY | cut -f 1 -d '/')
 
-	[[ "$ENTRY" == "$ENTRYBASE" ]] &&
-		FROM=$(grep -w "$ENTRY\$" $LOCKFILE | awk '{print $1}') ||
+	if [[ "$ENTRY" == "$ENTRYBASE" ]]; then
+		FROM=$(grep -w "$ENTRY\$" $LOCKFILE | awk '{print $1}')
+	else
 		FROM=$(grep -w "$ENTRYBASE\$" $LOCKFILE | awk '{print $1}')
+		COMPLEMENT=$(echo $ENTRY | sed "s/$ENTRYBASE//g")
+	fi
 
 	if [[ -z "$FROM" ]]; then
 		if [[ "$ENTRY" == "$ENTRYBASE" ]]; then
-			printf "[ !! ] No origin file for '$ENTRY'\n"
+			printf "[ !! ] No origin file for '$ENTRY'\n" >&2
 			exit 1
 		else
-			printf "[ !! ] No origin file for '$ENTRYBASE'\n"
+			printf "[ !! ] No origin file for '$ENTRYBASE'\n" >&2
 			exit 1
 		fi
+
 	else
-		echo $FROM
+		echo $FROM$COMPLEMENT
 	fi
 }
 
@@ -108,18 +113,18 @@ function lock {
 
 			ORIGFILE=$2
 			ENTRY=$3
+			ENTRYBASE=$(echo $ENTRY | cut -f 1 -d '/')
 
-			EXISTING=$(awk '{print $2}' $LOCKFILE | grep "$ENTRY")
-			EXISTING_ORIGIN=$(grep "$ENTRY" $LOCKFILE | awk '{print $1}')
+			EXISTING=$(awk '{print $2}' $LOCKFILE | grep "$ENTRYBASE")
+			EXISTINGBASE=$(grep "$ENTRYBASE" $LOCKFILE | awk '{print $1}')
 
 			if [[ -n "$EXISTING" ]]; then
-				if [[ "$ORIGFILE" != "$EXISTING_ORIGIN" ]]; then
+				if [[ ! "$ORIGFILE" =~ "$EXISTINGBASE" ]]; then
 					printf "[ !! ] '$ENTRY' already exists with a different origin file\n"
 					exit 1
 				else
-					printf "[ OK ] Updated '$ENTRY'\n"
-					cp -r $ORIGFILE $TMP/$ENTRY
-					return 1
+					printf "[ ** ] Updating existing '$ENTRY'\n"
+					return
 				fi
 			fi
 
@@ -127,7 +132,6 @@ function lock {
 
 		'rm') # [entry]
 			ENTRY=$2
-
 			ENTRYBASE=$(echo $ENTRY | cut -f 1 -d '/')
 
 			if [[ "$ENTRY" == "$ENTRYBASE" ]]; then
@@ -177,73 +181,86 @@ function sync {
 	prevent-over  5 $#
 
 	case $# in
-	'3'|'2')
+		'3'|'2')
 
-		[[ $# == 2 ]] && {
-			FILE=$PWD
-			FLAG=$1
-			VALUE=$2
-		} || {
-			FILE=$1
-			FLAG=$2
-			VALUE=$3
-		}
+			[[ $# == 2 ]] && {
+				FILE=$PWD
+				FLAG=$1
+				VALUE=$2
+			} || {
+				FILE=$1
+				FLAG=$2
+				VALUE=$3
+			}
 
-		if [[ $FLAG == '-a' ]]; then
-			ORIGFILE=$(readlink --canonicalize $FILE 2>/dev/null)
-			ENTRY="@$VALUE"
+			if [[ ${VALUE::1} == '@' ]]; then
+				printf "[ !! ] Wrong format. See td --help\n"
+				exit 1
+			fi
 
-		else
+			if [[ $FLAG == '-a' ]]; then
+				ORIGFILE=$(readlink --canonicalize $FILE 2>/dev/null)
+				ENTRY="@$VALUE"
+
+			elif [[ $VALUE == '-a' ]]; then
+				ORIGFILE="$(readlink --canonicalize $FILE 2>/dev/null)/$FLAG"
+				ENTRY="@$(basename $PWD)/$FLAG"
+
+			else
+				usage
+				exit 1
+			fi;;
+
+		'1'|'0')
+			[[ $# == 1 ]] && FILE=$1 || FILE=$PWD
+
+			ORIGFILE=$(readlink --canonicalize "$FILE" 2>/dev/null)
+			ENTRY="@$(basename $ORIGFILE)";;
+
+		*)
 			usage
-			exit 1
-		fi;;
-
-	'1'|'0')
-		[[ $# == 1 ]] && FILE=$1 || FILE=$PWD
-
-		ORIGFILE=$(readlink --canonicalize "$FILE" 2>/dev/null)
-		ENTRY="@$(basename $ORIGFILE)";;
-
-	*)
-		usage
-		exit 1;;
+			exit 1;;
 	esac
 
-	lock add $ORIGFILE $ENTRY && {
+	lock add $ORIGFILE $ENTRY
 
-		cp -r $ORIGFILE $TMP/$ENTRY && {
-				echo [ OK ] Instantiated \'$ORIGFILE\' in \'$TMP\' as \'$ENTRY\' ||
-				echo [ !! ] Couldn\'t instantiate \'$ORIGFILE\'
-		}
+	echo \(lock command\) entry: cp -rT $ORIGFILE $TMP/$ENTRY
 
+	cp -rT $ORIGFILE $TMP/$ENTRY && {
+		echo [ OK ] Instantiated \'$ORIGFILE\' in \'$TMP\' as \'$ENTRY\' ||
+		echo [ !! ] Couldn\'t instantiate \'$ORIGFILE\'
 	}
 }
 
 # td { rm [@name], rs [@name] }
-function wrap-arround {
+function overwrite { # { remove [@name], restore [@name] }
 
-	prevent-over 2 $#
+	prevent-over  2 $#
 	prevent-under 1 $#
 
 	check-lockfile
 
 	ENTRY=$2
 
-	if [[ ${ENTRY::1} != '@' ]]; then
-		printf "[ !! ] Wrong format. See td --help\n"
-		exit 1
-	fi
+	[[ -z $ENTRY ]] &&
+		ENTRY=@$(basename $PWD)
 
-	if [[ $1 == 'remove' ]]; then
-		rm -rf $TMP/$ENTRY && echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' || echo [ !! ] Couldn\'t remove \'$ENTRY\'
-
-	elif [[ $1 == 'restore' ]]; then
-		mv $TMP/$ENTRY $(resolute $ENTRY) && echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' || echo [ !! ] Couldn\'t restore \'$ENTRY\'
-
-	fi
+	[[ ${ENTRY::1} != '@' ]] &&
+		ENTRY=@$(basename $PWD)/$ENTRY
 
 	lock rm $ENTRY
 
+	if [[ $1 == 'remove' ]]; then
+		rm -rf $TMP/$ENTRY &&
+			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' ||
+			echo [ !! ] Couldn\'t remove \'$ENTRY\'
+
+	elif [[ $1 == 'restore' ]]; then
+		mv -T $TMP/$ENTRY $(resolute $ENTRY) &&
+			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' ||
+			echo [ !! ] Couldn\'t restore \'$ENTRY\'
+
+	fi
 }
 
 # td ls
@@ -284,10 +301,11 @@ function diff {
 	
 	ENTRY=$1
 
-	if [[ ${ENTRY::1} != '@' ]]; then
-		printf "[ !! ] Wrong format. See td --help\n"
-		exit 1
-	fi
+	[[ -z $ENTRY ]] &&
+		ENTRY=@$(basename $PWD)
+
+	[[ ${ENTRY::1} != '@' ]] &&
+		ENTRY=@$(basename $PWD)/$ENTRY
 
 	if [[ -z $ENTRY ]]; then
 		usage
@@ -296,9 +314,9 @@ function diff {
 
 	ORIGFILE=$(resolute $ENTRY)
 
-	[[ -z $ORIGFILE ]] && printf "[ !! ] No origin file for '$ENTRY'\n" && exit 1
+	[[ -z $ORIGFILE ]] && exit 1
 
-	$(which diff) --color -u $TMP/$ENTRY $ORIGFILE
+	$DIFF --color -u $TMP/$ENTRY $ORIGFILE && echo [ !! ] Files are the same
 }
 ### END FUNCTIONALITY ###
 
@@ -316,7 +334,7 @@ case $1 in
 		popd &>/dev/null
 		exit 0;;
 
-	'sync') # done
+	'sync') # done - bug
 		sync ${@:2};;
 
 	'diff') # done
@@ -328,11 +346,11 @@ case $1 in
 	'ls') # done
 		list ${@:2};;
 
-	'rm') # done
-		wrap-arround remove ${@:2};;
+	'rm') # done - bug
+		overwrite remove ${@:2};;
 
-	'rs') # done
-		wrap-arround restore ${@:2};;
+	'rs') # done - bug
+		overwrite restore ${@:2};;
 
 	*)
 		usage
