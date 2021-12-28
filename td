@@ -224,8 +224,6 @@ function sync {
 
 	lock add $ORIGFILE $ENTRY
 
-	echo \(lock command\) entry: cp -rT $ORIGFILE $TMP/$ENTRY
-
 	cp -rT $ORIGFILE $TMP/$ENTRY && {
 		echo [ OK ] Instantiated \'$ORIGFILE\' in \'$TMP\' as \'$ENTRY\' ||
 		echo [ !! ] Couldn\'t instantiate \'$ORIGFILE\'
