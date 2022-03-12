@@ -20,6 +20,7 @@ function about {
 Usage:\ttd sync [file] -a [name] => Instantiates a file to the tmpfs
 \ttd wrap [CMD]    @[name] => Wraps an instance with a command
 \ttd diff @[name]\t\t => Diffs against an instance
+\ttd new  @[name]\t\t => Diffs against the original file
 \ttd rm   @[name]\t\t => Removes an instance from the tmpfs
 \ttd rs   @[name]\t\t => Restores an instance from the tmpfs
 
@@ -293,11 +294,11 @@ function wrap {
 # td diff [@name]
 function diff {
 
-	prevent-over 1 $#
+	prevent-over 2 $#
 
 	check-lockfile
 	
-	ENTRY=$1
+	ENTRY=$2
 
 	[[ -z $ENTRY ]] &&
 		ENTRY=@$(basename $PWD)
@@ -314,40 +315,49 @@ function diff {
 
 	[[ -z $ORIGFILE ]] && exit 1
 
-	$DIFF --color -u $TMP/$ENTRY $ORIGFILE && echo [ !! ] Files are the same
+	if [[ $1 = 'orig' ]]; then
+		$DIFF --color -u $TMP/$ENTRY $ORIGFILE && echo [ !! ] Files are the same
+	else
+		$DIFF --color -u $ORIGFILE $TMP/$ENTRY && echo [ !! ] Files are the same
+	fi
 }
 ### END FUNCTIONALITY ###
 
 case $1 in
 
-	'status') # done
+	'status')
 		[ -f $LOCKFILE ] &&
 		echo [ OK ] lockfile found || {
 			echo [ !! ] No lockfile found
 			exit 1
 		};;
 
-	'kill') # done
+	'kill')
 		lock del && echo [ OK ] Cleaned \'$TMP\', removed lockfile
 		popd &>/dev/null
 		exit 0;;
 
-	'sync') # done - bug
+	'sync')
 		sync ${@:2};;
 
-	'diff') # done
-		diff ${@:2};;
+	'diff')
+		echo orig
+		diff orig ${@:2};;
 
-	'wrap') # done
+	'new')
+		echo new
+		diff new ${@:2};;
+
+	'wrap')
 		wrap ${@:2};;
 
-	'ls') # done
+	'ls')
 		list ${@:2};;
 
-	'rm') # done - bug
+	'rm')
 		overwrite remove ${@:2};;
 
-	'rs') # done - bug
+	'rs')
 		overwrite restore ${@:2};;
 
 	*)
