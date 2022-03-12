@@ -11,7 +11,7 @@ TMP=/tmp # change this
 LOCKFILE=$TMP/td.lock # change this
 DIFF=/bin/diff # change this
 
-VERSION="v0.2.2"
+VERSION="v0.3.0"
 
 ### BEGIN ABOUT ###
 function about {
@@ -341,11 +341,9 @@ case $1 in
 		sync ${@:2};;
 
 	'diff')
-		echo orig
 		diff orig ${@:2};;
 
 	'new')
-		echo new
 		diff new ${@:2};;
 
 	'wrap')
