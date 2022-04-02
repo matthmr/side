@@ -11,10 +11,12 @@
 # note:  compatible only with systemd-compliant systems or with systems that have `shutdown`
 #        linked to their respective init systems' way of shutting down.
 
-term= # change this
-update= # change this
-shell= # change this
-shutdown= # chane this
+term='urxvt' # change this
+termcmd='-e' # change this
+update='pacman -Su' # change this
+shell='bash' # change this
+sudo='doas' # change this
+shutdown="$sudo openrc-shutdown -p now" # change this
 
 usage() {
 	echo 'Usage: down [up/down, sys, status/help]'
@@ -68,7 +70,7 @@ usage() {
 				$update
 			fi
 		else
-			$term $(which down) -T &
+			$term $termcmd $(which down) -T &
 		fi
 	else
 		$shutdown
