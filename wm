@@ -21,12 +21,13 @@ CLEAR="\x1b[0m$BULLET"
 
  AWESOME="$BULLET\x1b[1m awesome   \x1b[0m" # change this
      DWM="$BULLET\x1b[1m dwm       \x1b[0m" # change this
+      I3="$BULLET\x1b[1m i3        \x1b[0m" # change this
 TERMINAL="$BULLET\x1b[1m tty / pts \x1b[0m" # change this
 
-#                 0         1       2
-OPTIONSLIST=("$AWESOME" "$DWM" "$TERMINAL") # change this
+#             0          1      2     3
+OPTIONSLIST=("$AWESOME" "$DWM" "$I3" "$TERMINAL") # change this
 
-LIST_LEN=2 # change this
+LIST_LEN=3 # change this
 LIST_I=0 # change this
 
 clear_current() {
@@ -63,11 +64,18 @@ cursor_up() {
 run() {
 	case $LIST_I in
 		0)
+			CHOICE=awesome
 			printf "\x1b[1;92m * \x1b[0m Logging in with awesomewm\n\n"
 			sleep 1
 			;;
 		1)
+			CHOICE=dwm
 			printf "\x1b[1;92m * \x1b[0m Logging in with dwm\n\n"
+			sleep 1
+			;;
+		2)
+			CHOICE=i3
+			printf "\x1b[1;92m * \x1b[0m Logging in with i3\n\n"
 			sleep 1
 			;;
 		*)
@@ -96,6 +104,7 @@ wm() {
 	printf "\n\x1b[1;92m * \x1b[0m Choose a window manager to log in with\n
 $SAVE$HIGHLIGHT$AWESOME
 $DWM
+$I3
 $TERMINAL\n
 $RESTORE"
 

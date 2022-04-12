@@ -57,6 +57,7 @@ A framework for working with the tmpfs.
 - `td ls` to list all intances.
 - `td status` to see status about the lockfile (`td.lock`)
 - See more by running `td -h`.
+
 This script is **not** script.sd compliant. Default tmpfs is `/tmp`
 
 ## clock
@@ -64,8 +65,9 @@ A dwm shell script for a cool® status bar.
 
 ## wm
 A `tty` script for launching window managers.
-## Usage:
-- `j` to go down
-- `k` to go up
-- `l` to select
+### Usage:
+- `j` to go down.
+- `k` to go up.
+- `l` to select.
+
 Append the [init file template](wm.xinitrc) in your `.xinitrc`.

@@ -247,8 +247,6 @@ function overwrite { # { remove [@name], restore [@name] }
 	[[ ${ENTRY::1} != '@' ]] &&
 		ENTRY=@$(basename $PWD)/$ENTRY
 
-	lock rm $ENTRY
-
 	if [[ $1 == 'remove' ]]; then
 		rm -rf $TMP/$ENTRY &&
 			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' ||
@@ -258,6 +256,8 @@ function overwrite { # { remove [@name], restore [@name] }
 		mv -T $TMP/$ENTRY $(resolute $ENTRY) &&
 			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t restore \'$ENTRY\'
+
+	lock rm $ENTRY
 
 	fi
 }
