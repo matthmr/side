@@ -23,6 +23,7 @@ Usage:\ttd sync [file] -a [name] => Instantiates a file to the tmpfs
 \ttd new  @[name]\t\t => Diffs against the original file
 \ttd rm   @[name]\t\t => Removes an instance from the tmpfs
 \ttd rs   @[name]\t\t => Restores an instance from the tmpfs
+\ttd up   @[name]\t\t => Updates an instance from the tmpfs
 
 \ttd kill\t\t\t => Kills all instances
 \ttd ls\t\t\t => Lists all instances
@@ -251,15 +252,20 @@ function overwrite { # { remove [@name], restore [@name] }
 		rm -rf $TMP/$ENTRY &&
 			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t remove \'$ENTRY\'
+			lock rm $ENTRY
 
 	elif [[ $1 == 'restore' ]]; then
 		mv -T $TMP/$ENTRY $(resolute $ENTRY) &&
 			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t restore \'$ENTRY\'
+			lock rm $ENTRY
 
-	lock rm $ENTRY
-
+	elif [[ $1 == 'update' ]]; then
+		cp -Trf $TMP/$ENTRY $(resolute $ENTRY) &&
+			echo [ OK ] Update \'$ENTRY\' from \'$TMP\' ||
+			echo [ !! ] Couldn\'t update \'$ENTRY\'
 	fi
+
 }
 
 # td ls
@@ -357,6 +363,9 @@ case $1 in
 
 	'rs')
 		overwrite restore ${@:2};;
+
+	'up')
+		overwrite update ${@:2};;
 
 	*)
 		usage
