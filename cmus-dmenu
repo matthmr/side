@@ -42,18 +42,18 @@ handle_vol() {
 	[ -z $VOL ] && exit 0
 	$CMUS_REMOTE -v $VOL
 }
-handle_playlist() {
-	PLAYLISTS=`find $PLAYLIST_CACHE -maxdepth 1 -type f -not -name 'default'`
-	PLAYLIST=`feeddmenu "$PLAYLISTS" 'playlist:'`
-	[ -z $PLAYLIST ] && exit 0
-	$CMUS_REMOTE -f $PLAYLIST
-}
-#handle_file() {
-#	FILES=`find $MUSIC_DIR -type f`
-#	FILE=`feeddmenu "$FILES" 'file'`
-#	[ -z $FILE ] && exit 0
-#	$CMUS_REMOTE -f $FILE
+#handle_playlist() {
+#	PLAYLISTS=`find $PLAYLIST_CACHE -maxdepth 1 -type f -not -name 'default'`
+#	PLAYLIST=`feeddmenu "$PLAYLISTS" 'playlist:'`
+#	[ -z $PLAYLIST ] && exit 0
+#	$CMUS_REMOTE -f $PLAYLIST
 #}
+handle_file() {
+	FILES=`find $MUSIC_DIR -type f`
+	FILE=`feeddmenu "$FILES" 'file'`
+	[ -z $FILE ] && exit 0
+	$CMUS_REMOTE -f $FILE
+}
 
 show_query() {
 	QUERY=`$CMUS_REMOTE -Q`
