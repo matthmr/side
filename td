@@ -11,7 +11,7 @@ TMP=/tmp # change this
 LOCKFILE=$TMP/td.lock # change this
 DIFF=/bin/diff # change this
 
-VERSION="v0.3.0"
+VERSION="v0.4.0"
 
 ### BEGIN ABOUT ###
 function about {
@@ -226,7 +226,7 @@ function sync {
 
 	lock add $ORIGFILE $ENTRY
 
-	cp -rT $ORIGFILE $TMP/$ENTRY && {
+	cp -v -ruT --preserve=all $ORIGFILE $TMP/$ENTRY && {
 		echo [ OK ] Instantiated \'$ORIGFILE\' in \'$TMP\' as \'$ENTRY\' ||
 		echo [ !! ] Couldn\'t instantiate \'$ORIGFILE\'
 	}
@@ -249,19 +249,19 @@ function overwrite { # { remove [@name], restore [@name] }
 		ENTRY=@$(basename $PWD)/$ENTRY
 
 	if [[ $1 == 'remove' ]]; then
-		rm -rf $TMP/$ENTRY &&
+		rm -rf -v $TMP/$ENTRY &&
 			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t remove \'$ENTRY\'
 			lock rm $ENTRY
 
 	elif [[ $1 == 'restore' ]]; then
-		mv -T $TMP/$ENTRY $(resolute $ENTRY) &&
+		mv -v -T $TMP/$ENTRY $(resolute $ENTRY) &&
 			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t restore \'$ENTRY\'
 			lock rm $ENTRY
 
 	elif [[ $1 == 'update' ]]; then
-		cp -Trf $TMP/$ENTRY $(resolute $ENTRY) &&
+		cp -v -Trf $TMP/$ENTRY $(resolute $ENTRY) &&
 			echo [ OK ] Update \'$ENTRY\' from \'$TMP\' ||
 			echo [ !! ] Couldn\'t update \'$ENTRY\'
 	fi

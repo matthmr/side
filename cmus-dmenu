@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# Made by mH (https://github.com/matthmr)
+
+#*****************************************************
+# change anything that is followed by "#change this" #
+#*****************************************************
+
+# cmus-dmenu: cmus integration with dmenu
+
+DMENU="/home/mh/Source/bin/dmenu" # change this
+PLAYLIST_CACHE="/home/mh/.config/cmus/playlists/" # change this
+MUSIC_DIR="/home/mh/Music" # change this
+CMUS_REMOTE=cmus-remote # change this
+
+PROMPT="\
+契 play
+ pause
+ pause playback
+栗 stop
+怜 next
+玲 prev
+ file
+凌 repeat
+神 seek
+列 shuffle
+墳 vol
+ query
+"
+#蘿 playlist
+
+feeddmenu() {
+	echo -ne "$1" | $DMENU -p "$2"
+}
+
+handle_seek() {
+	SEEK=`feeddmenu '' 'seek:'`
+	[ -z $SEEK ] && exit 0
+	$CMUS_REMOTE -k $SEEK
+}
+handle_vol() {
+	VOL=`feeddmenu '' 'vol:'`
+	[ -z $VOL ] && exit 0
+	$CMUS_REMOTE -v $VOL
+}
+handle_playlist() {
+	PLAYLISTS=`find $PLAYLIST_CACHE -maxdepth 1 -type f -not -name 'default'`
+	PLAYLIST=`feeddmenu "$PLAYLISTS" 'playlist:'`
+	[ -z $PLAYLIST ] && exit 0
+	$CMUS_REMOTE -f $PLAYLIST
+}
+#handle_file() {
+#	FILES=`find $MUSIC_DIR -type f`
+#	FILE=`feeddmenu "$FILES" 'file'`
+#	[ -z $FILE ] && exit 0
+#	$CMUS_REMOTE -f $FILE
+#}
+
+show_query() {
+	QUERY=`$CMUS_REMOTE -Q`
+	feeddmenu "$QUERY" '' > /dev/null
+}
+
+main() {
+	DMENU_ACTION=`feeddmenu "$PROMPT" 'action:'`
+	DMENU_ACTION=${DMENU_ACTION##* }
+
+	case "$DMENU_ACTION" in
+
+	'pause')
+		$CMUS_REMOTE -u;;
+	'pause playback')
+		$CMUS_REMOTE -U;;
+	'stop')
+		$CMUS_REMOTE -s;;
+	'next')
+		$CMUS_REMOTE -n;;
+	'prev')
+		$CMUS_REMOTE -r;;
+	'repeat')
+		$CMUS_REMOTE -R;;
+	'shuffle')
+		$CMUS_REMOTE -S;;
+	'play')
+		$CMUS_REMOTE -p;;
+
+	'seek')
+		handle_seek;;
+	'vol')
+		handle_vol;;
+	'file')
+		handle_file;;
+	#'playlist')
+	#	handle_playlist;;
+
+	'query')
+		show_query;;
+
+	esac
+
+}
+
+main

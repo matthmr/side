@@ -71,3 +71,6 @@ A `tty` script for launching window managers.
 - `l` to select.
 
 Append the [init file template](wm.xinitrc) in your `.xinitrc`.
+
+## cmus-dmenu
+[dmenu](https://tools.suckless.org/dmenu/) with [cmus](https://github.com/cmus/cmus) using `cmus-remote`.
