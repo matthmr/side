@@ -1,15 +1,106 @@
 #!/usr/bin/env bash
 # Made by mH (https://github.com/matthmr)
 
-MEM=$(free -h --kilo | awk '/^Mem:/ {print $3 "/" $2}')
-DISK=$(df -Ph | grep "/dev/sdb2" | awk '{print $3 "/" $2}')
-# IP=$(nmcli -a | grep inet4 | tr '[./]' ' ' | awk '{print $4"."$5}')
-UPTIME=$(uptime -p | grep -o '[0-9]*' | tr '\n' ':')
-UPTIME=${UPTIME%:}
-KERNEL=$(uname -r)
-KERNEL=${KERNEL%-arch*}
+# Disk
+#"/dev/sda1"
+DRIVES=("/dev/sdb1" "/dev/sdb2" "/dev/sdc2")
+DRIVENO=${#DRIVES[@]}
+DRIVEIN=$(($RANDOM % $DRIVENO))
+DRIVE=${DRIVES[DRIVEIN]}
+DISK=$(df -H "$DRIVE" | sed 1d | awk '{print $3 "/" $2 " ["$5"]" " ["$6"]"}')
 
+# Volume
+VOL=$(amixer get Master | grep -Eo '\[[0-9]{1,3}%\] \[\-?[0-9]{1,3}\.[0-9]{1,2}dB')
+DB=${VOL/\[*%\] /}
+PERC=${VOL/$DB/}
+PERC=${PERC/\[/}
+PERC=${PERC/\]/}
+VOL="$PERC$DB+]"
+
+# Memory
+MEM=$(free -h --si | awk '/^Mem:/ {print $3 "/" $2}')
+_MEM=$(free --mega | awk '/^Mem:/ {print $2 "/" $3}')
+PERC=$(( 100 / ($_MEM) ))
+MEM="$MEM [$PERC%]"
+
+# Ethernet
+INTERFACE="eth0"
+_IP=$(ip addr show $INTERFACE | grep 192\.168 | awk '{print $2}')
+IP="${_IP%/*} [$INTERFACE]"
+
+# Uptime
+_UPTIME=$(uptime -p)
+_UPTIME=${_UPTIME##up }
+__UPTIME=
+
+UPTIME_SUF=${_UPTIME##* }
+UPTIME_PRE=${_UPTIME%%,*}
+UPTIME_PRE=${UPTIME_PRE##* }
+
+if [[ "$UPTIME_PRE" = "$UPTIME_SUF" ]]
+then
+	stop_format=true
+else
+	stop_format=false
+fi
+
+cap=1
+while [ $cap -lt 5 ]
+do
+
+	cap=$((cap + 1))
+
+	__UPTIME="${__UPTIME}${_UPTIME%% $UPTIME_PRE*}"
+
+	case "$UPTIME_PRE" in
+		'days'|'day')
+			__UPTIME="${__UPTIME}d:"
+			;;
+		'hours'|'hour')
+			__UPTIME="${__UPTIME}h:"
+			;;
+		'minutes'|'minute')
+			__UPTIME="${__UPTIME}m:"
+			;;
+	esac
+
+	if $stop_format
+	then
+		break
+	fi
+
+	UPTIME_PRE=${_UPTIME#*, }
+	_UPTIME=${UPTIME_PRE}
+
+	UPTIME_PRE=${UPTIME_PRE#* }
+	UPTIME_PRE=${UPTIME_PRE%%,*}
+
+	if [[ "$UPTIME_PRE" = "$UPTIME_SUF" ]]
+	then
+		stop_format=true
+	fi
+
+done
+
+#SINCE=$(uptime -s)
+UPTIME="${__UPTIME%:}" #[$SINCE]
+
+# Kernel
+_KERNEL=$(uname -r)
+KERNEL="${_KERNEL%-arch*} [linux]"
+
+# Time
 DATE_DAY=$(date +'%d/%m/%Y %a')
 DATE_HOUR=$(date +'%I:%M %p')
 
-echo "  $KERNEL |  $MEM |  $DISK |  $UPTIME |  $DATE_DAY |  $DATE_HOUR "
+PROMPT=\
+"  $KERNEL |\
+  $IP |\
+ 墳 $VOL |\
+  $MEM |\
+  $DISK |\
+  $UPTIME |\
+  $DATE_DAY |\
+  $DATE_HOUR "
+
+echo "$PROMPT"

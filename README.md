@@ -64,7 +64,7 @@ This script is **not** script.sd compliant. Default tmpfs is `/tmp`
 A dwm shell script for a cool® status bar.
 
 ## wm
-A `tty` script for launching window managers.
+A tty script for launching window managers.
 ### Usage:
 - `j` to go down.
 - `k` to go up.
@@ -73,4 +73,7 @@ A `tty` script for launching window managers.
 Append the [init file template](wm.xinitrc) in your `.xinitrc`.
 
 ## cmus-dmenu
-[dmenu](https://tools.suckless.org/dmenu/) with [cmus](https://github.com/cmus/cmus) using `cmus-remote`.
+[dmenu](https://tools.suckless.org/dmenu/) integration with [cmus](https://github.com/cmus/cmus) using `cmus-remote`.
+
+## i3-clock
+Pretty much just [clock](#clock) but **S T R E C H E D** to fill up i3's status bar.
