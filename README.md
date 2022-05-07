@@ -72,8 +72,14 @@ A tty script for launching window managers.
 
 Append the [init file template](wm.xinitrc) in your `.xinitrc`.
 
+## i3-clock
+Pretty much just [clock](#clock) but **S T R E C H E D** to fill up i3's status bar.
+
 ## cmus-dmenu
 [dmenu](https://tools.suckless.org/dmenu/) integration with [cmus](https://github.com/cmus/cmus) using `cmus-remote`.
 
-## i3-clock
-Pretty much just [clock](#clock) but **S T R E C H E D** to fill up i3's status bar.
+## alsa-dmenu
+[dmenu](https://tools.suckless.org/dmenu/) integration with alsa using `amixer`.
+
+## mpc-dmenu
+[dmenu](https://tools.suckless.org/dmenu/) integration with mpd using `mpc`.
