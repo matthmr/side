@@ -23,7 +23,8 @@ Usage:\ttd sync [file] -a [name] => Instantiates a file to the tmpfs
 \ttd new  @[name]\t\t => Diffs against the original file
 \ttd rm   @[name]\t\t => Removes an instance from the tmpfs
 \ttd rs   @[name]\t\t => Restores an instance from the tmpfs
-\ttd up   @[name]\t\t => Updates an instance from the tmpfs
+\ttd up   @[name]\t\t => Updates an instance to the tmpfs
+\ttd or   @[name]\t\t => Ovewrites an instance from the tmpfs
 
 \ttd kill\t\t\t => Kills all instances
 \ttd ls\t\t\t => Lists all instances
@@ -167,8 +168,8 @@ function lock {
 
 			pushd $TMP &>/dev/null
 
-			rm -rf $ENTRIES  2>/dev/null
-			rm -f  $LOCKFILE;;
+			rm -vrf $ENTRIES  2>/dev/null
+			rm -vf  $LOCKFILE;;
 
 	esac
 }
@@ -226,7 +227,7 @@ function sync {
 
 	lock add $ORIGFILE $ENTRY
 
-	cp -v -ruT --preserve=all $ORIGFILE $TMP/$ENTRY && {
+	cp -Truv --preserve=all $ORIGFILE $TMP/$ENTRY && {
 		echo [ OK ] Instantiated \'$ORIGFILE\' in \'$TMP\' as \'$ENTRY\' ||
 		echo [ !! ] Couldn\'t instantiate \'$ORIGFILE\'
 	}
@@ -249,21 +250,44 @@ function overwrite { # { remove [@name], restore [@name] }
 		ENTRY=@$(basename $PWD)/$ENTRY
 
 	if [[ $1 == 'remove' ]]; then
-		rm -rf -v $TMP/$ENTRY &&
-			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\' ||
+		rm -rf -v $TMP/$ENTRY
+		if [[ $? = 0 ]]; then
+			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\'
+		else
 			echo [ !! ] Couldn\'t remove \'$ENTRY\'
-			lock rm $ENTRY
+			exit 1
+		fi
+		lock rm $ENTRY
 
 	elif [[ $1 == 'restore' ]]; then
-		mv -v -T $TMP/$ENTRY $(resolute $ENTRY) &&
-			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\' ||
+		cp -Trufv --preserve=all $TMP/$ENTRY $(resolute $ENTRY)
+		if [[ $? = 0 ]]; then
+			echo [ OK ] Restored \'$ENTRY\' from \'$TMP\'
+		else
 			echo [ !! ] Couldn\'t restore \'$ENTRY\'
-			lock rm $ENTRY
+			exit 1
+		fi
+
+		lock rm $ENTRY
+		rm -rf $TMP/$ENTRY
+
+	elif [[ $1 == 'overwrite' ]]; then
+		cp -Trufv --preserve=all $TMP/$ENTRY $(resolute $ENTRY)
+		if [[ $? = 0 ]]; then
+			echo [ OK ] Overwrite \'$ENTRY\' from \'$TMP\'
+		else
+			echo [ !! ] Couldn\'t overwrite \'$ENTRY\'
+			exit 1
+		fi
 
 	elif [[ $1 == 'update' ]]; then
-		cp -v -Trf $TMP/$ENTRY $(resolute $ENTRY) &&
-			echo [ OK ] Update \'$ENTRY\' from \'$TMP\' ||
-			echo [ !! ] Couldn\'t update \'$ENTRY\'
+		cp -Trufv --preserve=all $(resolute $ENTRY) $TMP/$ENTRY
+		if [[ $? = 0 ]]; then
+			echo [ OK ] Update \'$TMP\' from \'$ENTRY\'
+		else
+			echo [ !! ] Couldn\'t update \'$TMP\'s
+			exit 1
+		fi
 	fi
 
 }
@@ -366,6 +390,9 @@ case $1 in
 
 	'up')
 		overwrite update ${@:2};;
+
+	'or')
+		overwrite overwrite ${@:2};;
 
 	*)
 		usage
