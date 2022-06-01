@@ -7,11 +7,16 @@
 
 # td: a framework for working with the linux tmpfs
 
-TMP=/tmp # change this
-LOCKFILE=$TMP/td.lock # change this
+if [[ -z "$TMP" ]]
+then
+	TMP=/tmp # change this
+fi
+
+TMP_ROOT=/tmp # change this
+LOCKFILE=$TMP_ROOT/td.lock # change this
 DIFF=/bin/diff # change this
 
-VERSION="v0.4.0"
+VERSION="v0.4.1"
 
 ### BEGIN ABOUT ###
 function about {
@@ -250,7 +255,7 @@ function overwrite { # { remove [@name], restore [@name] }
 		ENTRY=@$(basename $PWD)/$ENTRY
 
 	if [[ $1 == 'remove' ]]; then
-		rm -rf -v $TMP/$ENTRY
+		rm -vrf $TMP/$ENTRY
 		if [[ $? = 0 ]]; then
 			echo [ OK ] Removed \'$ENTRY\' from \'$TMP\'
 		else
@@ -269,7 +274,7 @@ function overwrite { # { remove [@name], restore [@name] }
 		fi
 
 		lock rm $ENTRY
-		rm -rf $TMP/$ENTRY
+		rm -rvf $TMP/$ENTRY
 
 	elif [[ $1 == 'overwrite' ]]; then
 		cp -Trufv --preserve=all $TMP/$ENTRY $(resolute $ENTRY)
@@ -400,4 +405,4 @@ case $1 in
 
 esac
 
-[[ -z "$(cat $LOCKFILE)" ]] && rm -rf $LOCKFILE
+[[ -z "$(cat $LOCKFILE)" ]] && rm -rvf $LOCKFILE
