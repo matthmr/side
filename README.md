@@ -53,6 +53,25 @@ Append the [init file template](wm.xinitrc) in your `.xinitrc`.
 ## i3-clock
 Pretty much just [clock](#clock) but **S T R E C H E D** to fill up i3's status bar.
 
+## youtube-json.sh
+[YouTube](https://www.youtube.com) `ytInitialData` JSON parser for queries using [jq](https://github.com/stedolan/jq).
+
+### Installation and usage:
+- change the `AWK_BASE` variable at the top of the file
+to the location of wherever you want to put the `awk` files.
+- run `youtube-json.sh <query>` to get a parsed result for your query.
+intermediary files are stored at `/tmp/youtube/<query>`
+- run `youtube-json.sh -c <query>` to clear the intermediary files, or
+`youtube-json.sh -c` to clear all files.
+- run `youtube-json.sh -s <query>` to generate a small static HTML webpage
+with your results.
+	+ if you already have a static webpage, running `youtube-json.sh` with the same
+query will generate a `_query.txt` file from your original query.
+
+### Notes:
+- if you already have a query, running `youtube-json.sh` with that query will
+**not** re-query it.
+
 ## dmenu scripts
 ### cmus-dmenu
 [dmenu](https://tools.suckless.org/dmenu/) integration with [cmus](https://github.com/cmus/cmus) using `cmus-remote`.
