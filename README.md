@@ -37,9 +37,6 @@ A framework for working with the tmpfs.
 
 This script is **not** script.sd compliant. Default tmpfs is `/tmp`
 
-## clock
-A dwm shell script for a cool® status bar.
-
 ## wm
 A tty script for launching window managers with `startx`.
 
@@ -49,9 +46,6 @@ A tty script for launching window managers with `startx`.
 - `l` to select.
 
 Append the [init file template](wm.xinitrc) in your `.xinitrc`.
-
-## i3-clock
-Pretty much just [clock](#clock) but **S T R E C H E D** to fill up i3's status bar.
 
 ## youtube-json.sh
 [YouTube](https://www.youtube.com) `ytInitialData` JSON parser for queries using [jq](https://github.com/stedolan/jq).
@@ -71,6 +65,20 @@ query will generate a `_query.txt` file from your original query.
 ### Notes:
 - if you already have a query, running `youtube-json.sh` with that query will
 **not** re-query it.
+
+## edit-copy.sh
+Edits the copy contents of an X11 server using `XSEL` and the
+`CLIPEDITOR` variables. Run with `-e` to edit the latest existing
+clipboard file.
+
+## statusbar
+
+Status bar generator spitting results to *STDOUT*.
+
+## xsetroot-statusbar
+
+Runs the `statusbar` script and also sets the title of the root window
+(equivalent to the statusbar in WMs like DWM) to the result of `statusbar`.
 
 ## dmenu scripts
 ### cmus-dmenu
