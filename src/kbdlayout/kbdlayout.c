@@ -82,10 +82,8 @@ static bool init_kbd(void) {
   XkbGetNames(dpy, XkbGroupNamesMask, kbddesc);
 
   if (!kbddesc->names) {
-    XkbFreeControls(kbddesc, XkbAllControlsMask, true);
-    XkbFreeNames(kbddesc, XkbSymbolsNameMask, true);
-    XkbFreeNames(kbddesc, XkbGroupNamesMask, true);
-    return false;
+    ret = false;
+    goto empty;
   }
 
   // count groups {{
@@ -217,15 +215,19 @@ static char* tok(int cgroup, char* symnamestr, tok_mask mask, char* buf) {
   uint am;
 
   if (mask & VAR) {
+    // look for the opening paren
     while (++i, (c = symnamestr[i])) {
       if (c == '(') {
         ll = (i+1);
         break;
       }
-      else if (c == ':') {
+      // abort it
+      else if (c == ':' || c == '+') {
         return NULL;
       }
     }
+    
+    // then the closing one
     while (++i, (c = symnamestr[i])) {
       if (c == ')') {
         lu = i;
@@ -233,6 +235,7 @@ static char* tok(int cgroup, char* symnamestr, tok_mask mask, char* buf) {
       }
     }
   }
+
   else if (mask & SYM) {
     while (++i, (c = symnamestr[i])) {
       if (c == '(' || c == ':' || c == '+') {
@@ -288,7 +291,7 @@ int main(void) {
 
   XCloseDisplay(dpy);
   if (symname) {
-    free (symname);
+    free(symname);
   }
   if (varname) {
     free(varname);
