@@ -1,0 +1,7 @@
+# Binary
+kbdlayout
+*.o
+
+# Dev
+tags
+TAGS
