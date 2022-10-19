@@ -71,6 +71,22 @@ Edits the copy contents of an X11 server using `XSEL` and the
 `CLIPEDITOR` variables. Run with `-e` to edit the latest existing
 clipboard file.
 
+## nyaa.sh
+
+`nyaa [dot] si`'s torrent download CLI interface.
+
+### Installation and usage:
+
+- change the variables prefixed with `# change this`
+- run `nyaa.sh [-m/-t] <query>` to query either a [m]agnet link or
+  [t]orrent file.
+- run `nyaa.sh -c <query>` to clear the results of `<query>`
+- run `nyaa.sh` to clear all queries and the *nyaa* base
+- run `nyaa.sh ... -d <dir>` to download to `<dir>`
+- run `nyaa.sh -l` to list actives queries
+
+Run `nyaa.sh --help` for more info.
+
 ## statusbar
 
 Status bar generator spitting results to *STDOUT*.

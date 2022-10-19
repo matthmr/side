@@ -68,6 +68,7 @@ static bool init_kbd(void) {
   XkbDescRec* kbddesc = XkbAllocKeyboard();
 
   if (!kbddesc) {
+    XFree(kbddesc);    
     return false;
   }
 
@@ -290,11 +291,15 @@ int main(void) {
   }
 
   XCloseDisplay(dpy);
+
   if (symname) {
     free(symname);
   }
   if (varname) {
     free(varname);
+  }
+  if (symnamestr) {
+    free(symnamestr);
   }
 
   return ret; 
