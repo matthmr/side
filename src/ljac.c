@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define NEXT_LINE "\033[1A"
@@ -29,18 +30,22 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     const char* arg = argv[1];
 
-    if (arg[0] == '-' && arg[1] == 'h') {
-      puts("Usage:   ljac [options]\n"
-           "Options: \n"
-           "  -p: print the current date before starting the loop");
-      exit(1);
-    }
-
-    if (arg[0] == '-' && arg[1] == 'p') {
-      t  = time(NULL);
-      lt = localtime(tp);
-      ljac_fmt("%d%02d%02d%02d%02d%02d\n", *lt);
-      sleep(1);
+    if (arg[0] == '-') {
+      ++arg;
+      if (strcmp(arg, "p") == 0) {
+        t  = time(NULL);
+        lt = localtime(tp);
+        ljac_fmt("%d%02d%02d%02d%02d%02d\n", *lt);
+        sleep(1);
+      }
+      else if (strcmp(arg, "h") == 0 ||
+               strcmp(arg, "-help") == 0) {
+        puts("Usage:       ljac [options]\n"
+             "Description: Literally just a clock\n"
+             "Options:\n"
+             "  -p: print the current date before starting the loop");
+        exit(1);
+      }
     }
   }
 
