@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define NEXT_LINE "\033[1A"
+#define NEXT_LINE "\033[1A\033[0G"
 
 // YYYYMMDDhhmmss
 static struct tm* lt;
