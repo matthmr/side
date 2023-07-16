@@ -10,7 +10,23 @@ This repository was very different up to commit `35441ef6`. After that commit, I
 deleted a lot of files that were duplicates (and also very out-of-date) from the
 ones tracked on the scripts repository.
 
+## new-res.py
+
+A python script for outputing a resolution given a file name and the target
+aspect ratio in form of another resolution.
+
+Python-depends on:
+
+- `subprocess`
+- `fractions`
+- `sys`
+
+System-depends on:
+
+- `mediainfo`
+
 ## ffl
+
 [unit](#unit) integration with [fzf](https://github.com/junegunn/fzf).
 
 ## orx
@@ -20,7 +36,9 @@ ones tracked on the scripts repository.
 because [X11](https://x.org/wiki) clears the clipboard when a window closes.
 This is **extremely** frustating (although being the intended behaviour) for
 tiling window manager users such as myself.
+
 ### Installation and usage:
+
 - put `orx` into a `$PATH` directory (/usr/local/bin, for example).
 - copy the contents of `orx.xbindkeysrc` to `~/.xbindkeysrc`.
 - restart the `xbindkeys` daemon.
@@ -42,6 +60,7 @@ For you Windows®©™ peeps who miss the recycle bin from that ***GOD-FORBIDDEN
 operating system.
 
 #### Installation and usage:
+
 - put `tra.sh` into a `$PATH` directory (/usr/local/bin, for example).
 - run `tra.sh init` or `tra.sh init [dir]` to instanciate a `tra.sh` directory.
 - `tra.sh send [file]` or `tra.sh s [file]` to send, add the `-a` flag to pass
