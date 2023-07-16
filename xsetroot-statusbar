@@ -1,7 +1,0 @@
-#!/usr/bin/sh
-
-while :
-do
-		xsetroot -name "$(statusbar)"
-		sleep 90
-done
