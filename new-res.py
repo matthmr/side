@@ -94,7 +94,7 @@ def main():
   for arg in argv:
     if arg == "--help" or arg == "-h":
       nr_help()
-      break
+      return 0
     if nr_file is None:
       nr_file = arg
     elif nr_factor is None:
