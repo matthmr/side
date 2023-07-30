@@ -18,7 +18,6 @@ aspect ratio in form of another resolution.
 Python-depends on:
 
 - `subprocess`
-- `fractions`
 - `sys`
 
 System-depends on:
