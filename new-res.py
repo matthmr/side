@@ -87,7 +87,10 @@ def nr_main(nr_file, nr_target_ratio):
       print("[ !! ] Image is not fit horizontal monitor")
       return 1
 
-  print(nr_scale(nr_base_res, nr_target_ratio))
+  ret = nr_scale(nr_base_res, nr_target_ratio)
+
+  print(f"From: {nr_base_res[0]}x{nr_base_res[1]}")
+  print(f"To: {ret[0]}x{ret[1]}")
 
 def main():
   nr_file  = None
