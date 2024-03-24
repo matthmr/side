@@ -9,7 +9,6 @@
 #define PAGE 4096
 
 static char input[PAGE];
-static char* line;
 
 static size_t get_uptime(char** ret) {
   FILE* uptime = fopen("/proc/uptime", "r");
@@ -21,6 +20,7 @@ static size_t get_uptime(char** ret) {
   for (; input[i] != ' '; ++i) {
     if (input[i] == '.') {
       p = i;
+      break;
     }
   }
 
@@ -35,19 +35,20 @@ static size_t get_uptime(char** ret) {
   int uptime_hrs = uptime_sec / 3600;
   int uptime_min = (uptime_sec / 60) % 60;
 
-  return asprintf(ret, "%02d%02d", uptime_hrs, uptime_min);
+  return asprintf(ret, "%02d%02d up", uptime_hrs, uptime_min);
 }
 
 static size_t get_mpd(char** ret, size_t avail) {
   char* read = fgets(input, (avail + 2), stdin);
 
   // /^volume:/: don't have any song
-  if (strncmp("volume:", read, sizeof("volume")) == 0) {
+  if (!read || strncmp("volume:", read, sizeof("volume")) == 0) {
     return 0;
   }
 
   size_t read_len = strlen(read);
 
+  // ignore newline
   if (read[read_len-1] == '\n') {
     read[read_len-1] = '\0';
     --read_len;
